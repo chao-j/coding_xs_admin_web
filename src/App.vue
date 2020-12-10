@@ -7,7 +7,12 @@
 
 <script>
 export default {
-  name: "App"
+  name: "App",
+  data() {
+    return {};
+  },
+  mounted() {},
+  methods: {}
 };
 </script>
 
@@ -31,5 +36,6 @@ export default {
   width: 100%;
   /* border: 1px solid red; */
   overflow-y: scroll;
+  padding: 10px;
 }
 </style>

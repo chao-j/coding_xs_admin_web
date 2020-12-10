@@ -1,11 +1,16 @@
 import Vue from "vue";
 import Router from "vue-router";
-import HelloWorld from "@/components/HelloWorld";
-import Index from "@/components/index/Index";
-import NavBar from "@/components/components/NavBar";
-import Admin from "@/components/admin/Admin";
-import ErrorPage from "@/components/errorPage/ErrorPage";
-import Modular from "@/components/modular/Modular";
+// import Index from "@/components/index/Index";
+// import NavBar from "@/components/components/NavBar";
+// import Admin from "@/components/admin/Admin";
+// import ErrorPage from "@/components/errorPage/ErrorPage";
+// import Modular from "@/components/modular/Modular";
+const Index = () => import("@/components/index/Index");
+const NavBar = () => import("@/components/components/NavBar");
+const Admin = () => import("@/components/admin/Admin");
+const ErrorPage = () => import("@/components/errorPage/ErrorPage");
+const Modular = () => import("@/components/modular/Modular");
+const Lesson = () => import("@/components/lesson/Lesson");
 Vue.use(Router);
 
 const router = new Router({
@@ -38,6 +43,14 @@ const router = new Router({
       components: {
         navbar: NavBar,
         side: Modular
+      }
+    },
+    {
+      path: "/Lesson",
+      name: "Lesson",
+      components: {
+        navbar: NavBar,
+        side: Lesson
       }
     }
   ]

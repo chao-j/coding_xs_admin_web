@@ -5,6 +5,7 @@
       <span v-if="name == ''">CXS管理平台</span>
       <span v-else class="name">{{ name }}</span>
     </div>
+
     <Menu active-name="" :open-names="['1']" theme="dark">
       <Submenu name="1">
         <template slot="title">
@@ -12,7 +13,7 @@
           内容管理
         </template>
         <MenuItem name="1-1" to="/modular">模块管理</MenuItem>
-        <MenuItem name="1-2">课程管理</MenuItem>
+        <MenuItem name="1-2" to="/lesson">课程管理</MenuItem>
         <MenuItem name="1-3">章节管理</MenuItem>
         <MenuItem name="1-4">上传中心</MenuItem>
       </Submenu>

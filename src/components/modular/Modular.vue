@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 新建模块 -->
     <div>
-      <Form ref="createForm" :model="createForm" inline>
+      <Form :model="createForm" inline>
         <FormItem>
           <Input
             v-model="createForm.name"
@@ -30,6 +30,9 @@
             >创建</Button
           >
         </FormItem>
+        <FormItem>
+          <Button type="info" @click="getAllModular()">刷新</Button>
+        </FormItem>
       </Form>
     </div>
     <!-- 开放模块调整 -->
@@ -43,24 +46,25 @@
             class="block"
             v-for="(item, index) in openModulars"
             :key="item.id"
+            @click="popModal(item)"
             >{{ item.id }} {{ item.name }}
             <Icon
               :color="arrowEnable(index, true) ? '#2d8cf0' : '#c5c8ce'"
               type="md-arrow-dropleft-circle"
               :title="arrowEnable(index, true) ? '前移' : '已经是第一个'"
-              @click="onMove(index, true)"
+              @click.stop="onMove(index, true)"
             />
             <Icon
               :color="arrowEnable(index, false) ? '#2d8cf0' : '#c5c8ce'"
               type="md-arrow-dropright-circle"
               :title="arrowEnable(index, false) ? '后移' : '已经是最后'"
-              @click="onMove(index, false)"
+              @click.stop="onMove(index, false)"
             />
             <Icon
               color="#ed4014"
               type="md-close-circle"
               title="设为未开放"
-              @click="closeModular(index)"
+              @click.stop="closeModular(index)"
             />
           </span>
         </transition-group>
@@ -71,12 +75,13 @@
           class="block"
           v-for="(item, index) in closeModulars"
           :key="item.id"
+          @click="popModal(item)"
           >{{ item.id }} {{ item.name }}
           <Icon
             color="#19be6b"
             type="md-add-circle"
             title="设为开放"
-            @click="openModular(index)"
+            @click.stop="openModular(index)"
           />
         </span>
       </div>
@@ -89,6 +94,33 @@
         >
       </div>
     </div>
+    <Modal v-model="showModal" title="修改模块" loading @on-ok="modify">
+      <Form :model="modForm" inline>
+        <FormItem>
+          <Input
+            v-model="modForm.name"
+            placeholder="请输入模块名"
+            maxlength="16"
+            clearable
+          >
+          </Input>
+        </FormItem>
+        <FormItem>
+          <Input
+            v-model="modForm.desc"
+            placeholder="请输入模块名"
+            maxlength="16"
+            clearable
+          >
+          </Input>
+        </FormItem>
+      </Form>
+      <p>
+        原数据(id:{{ modForm.id }}) 模块名:{{ modForm.oldName }} 模块描述:{{
+          modForm.oldDesc || "undefined"
+        }}
+      </p>
+    </Modal>
   </div>
 </template>
 <script>
@@ -96,6 +128,14 @@ export default {
   name: "Modular",
   data() {
     return {
+      showModal: false,
+      modForm: {
+        id: -1,
+        oldName: "",
+        oldDesc: "",
+        name: "",
+        desc: ""
+      },
       createForm: {
         name: "",
         desc: "",
@@ -119,6 +159,16 @@ export default {
     this.getAllModular();
   },
   methods: {
+    popModal({ id, name, desc }) {
+      this.showModal = true;
+      this.modForm = {
+        id,
+        name,
+        desc,
+        oldDesc: desc,
+        oldName: name
+      };
+    },
     createModular() {
       let { name, desc } = this.createForm;
 
@@ -155,18 +205,18 @@ export default {
             let { modularMode, allModulars, openModulars } = result.data.data;
             this.modularMode = modularMode;
             this.openModulars = openModulars;
-
-            this.closeModulars = allModulars.filter(val => {
-              let isOpen = false;
-              for (let i = 0; i < openModulars.length; i++) {
-                let temp = val.id == openModulars[i].id;
-                if (temp) {
-                  isOpen = true;
-                  break;
-                }
-              }
-              return !isOpen;
-            });
+            this.closeModulars = allModulars; // 全部模块已经在后端过滤了开放的模块
+            // this.closeModulars = allModulars.filter(val => {
+            //   let isOpen = false;
+            //   for (let i = 0; i < openModulars.length; i++) {
+            //     let temp = val.id == openModulars[i].id;
+            //     if (temp) {
+            //       isOpen = true;
+            //       break;
+            //     }
+            //   }
+            //   return !isOpen;
+            // });
             this.oldClose = JSON.parse(JSON.stringify(this.closeModulars));
             this.oldOpen = JSON.parse(JSON.stringify(this.openModulars));
             // for (let p in allModulars) {
@@ -217,8 +267,16 @@ export default {
       // console.log(modulars.join(","));
       const includeIDs = modulars.join(",");
       this.axios
-        .post(`manager/lesson/getAllModular`)
-        .then(result => {})
+        .post(`manager/lesson/syncModular`, {
+          name: this.modularMode,
+          openModulars: includeIDs
+        })
+        .then(result => {
+          let { code, msg } = result.data;
+          if (this.$server.isSuccess(code)) {
+            this.$Message.success({ content: msg });
+          }
+        })
         .catch(err => {});
     },
     closeModular(index) {
@@ -232,6 +290,24 @@ export default {
       this.closeModulars.splice(index, 1);
       this.openModulars.push(tp);
       this.isChange = true;
+    },
+    modify() {
+      const { name, id, desc, oldName, oldDesc } = this.modForm;
+      this.showModal = false;
+
+      if (name == oldName && desc == oldDesc) {
+        this.$Message.warning({ content: "模块未修改" });
+        return;
+      }
+      this.axios
+        .post("manager/lesson/setModular", { id, name, desc })
+        .then(result => {
+          let { code, msg } = result.data;
+          if (this.$server.isSuccess(code)) {
+            this.$Message.success({ content: msg });
+            this.getAllModular();
+          }
+        });
     }
   },
   computed: {

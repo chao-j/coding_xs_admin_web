@@ -21,6 +21,10 @@ const resInfo = {
     code: 5004,
     msg: "服务器错误:DB_CALL"
   },
+  ERR_DB_UPDATE: {
+    code: 5005,
+    msg: "服务器错误:DB_UPDATE"
+  },
   // 4xxx
   ERR_CLIENT_PARAM: {
     code: 4000,
@@ -54,15 +58,11 @@ class ServerUtil {
   }
 
   get apiUrl() {
-    return this.env == "dev"
-      ? "http://127.0.0.1:3001/manager/"
-      : "http://admin.xsdxs.club/manager/";
+    return this.env == "dev" ? "http://127.0.0.1:3001/manager/" : "/manager/";
   }
 
   get serverUrl() {
-    return this.env == "dev"
-      ? "http://127.0.0.1:3001/"
-      : "http://admin.xsdxs.club/";
+    return this.env == "dev" ? "http://127.0.0.1:3001/" : "/";
   }
 
   isSuccess(code) {
