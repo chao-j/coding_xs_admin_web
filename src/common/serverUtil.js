@@ -58,11 +58,11 @@ class ServerUtil {
   }
 
   get apiUrl() {
-    return this.env == "dev" ? "http://127.0.0.1:3001/manager/" : "/manager/";
+    return this.env == "dev" ? "http://127.0.0.1:8084/manager/" : "/manager/";
   }
 
   get serverUrl() {
-    return this.env == "dev" ? "http://127.0.0.1:3001/" : "/";
+    return this.env == "dev" ? "http://127.0.0.1:8084/" : "/";
   }
 
   isSuccess(code) {

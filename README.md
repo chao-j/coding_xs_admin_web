@@ -1,10 +1,10 @@
 # coding_xs_admin_web
 
-> coding_xs管理平台网站页面
+> coding_xs 管理平台网站页面
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 

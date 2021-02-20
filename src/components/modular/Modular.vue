@@ -16,7 +16,9 @@
           <Input
             v-model="createForm.desc"
             placeholder="请输入模块描述"
-            maxlength="120"
+            maxlength="80"
+            type="textarea"
+            autosize
             clearable
           >
           </Input>
@@ -108,8 +110,10 @@
         <FormItem>
           <Input
             v-model="modForm.desc"
-            placeholder="请输入模块名"
-            maxlength="16"
+            placeholder="请输入描述"
+            maxlength="80"
+            type="textarea"
+            autosize
             clearable
           >
           </Input>

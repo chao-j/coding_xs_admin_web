@@ -10,7 +10,8 @@ const NavBar = () => import("@/components/components/NavBar");
 const Admin = () => import("@/components/admin/Admin");
 const ErrorPage = () => import("@/components/errorPage/ErrorPage");
 const Modular = () => import("@/components/modular/Modular");
-const Lesson = () => import("@/components/lesson/Lesson");
+// const Lesson = () => import("@/components/lesson/Lesson");
+const Course = () => import("@/components/lesson/Course");
 Vue.use(Router);
 
 const router = new Router({
@@ -46,11 +47,11 @@ const router = new Router({
       }
     },
     {
-      path: "/Lesson",
-      name: "Lesson",
+      path: "/course",
+      name: "Course",
       components: {
         navbar: NavBar,
-        side: Lesson
+        side: Course
       }
     }
   ]
